@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BEACON NEXUS — JAMB Excellence Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:wght@400;500;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #080d14;
+  --bg2: #0d1520;
+  --bg3: #111e2e;
+  --gold: #e8b94f;
+  --gold2: #ffd97d;
+  --teal: #00d4aa;
+  --teal2: #00ffcc;
+  --red: #ff5252;
+  --silver: #b0bec5;
+  --bronze: #cd8c4a;
+  --white: #eef2f7;
+  --gray: #607080;
+  --radius: 16px;
+  --card: rgba(13,21,32,0.97);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 10% 0%,rgba(0,212,170,0.07) 0%,transparent 60%),
+  radial-gradient(ellipse 60% 80% at 90% 100%,rgba(232,185,79,0.07) 0%,transparent 60%),
+  repeating-linear-gradient(45deg,transparent,transparent 80px,rgba(255,255,255,0.008) 80px,rgba(255,255,255,0.008) 81px);
+  pointer-events:none;z-index:0;}
+
+.screen{display:none;position:relative;z-index:1;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+
+/* ---- BRAND ---- */
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.brand-icon{width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,var(--teal),#007a60);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 0 32px rgba(0,212,170,0.3);}
+.brand-name{font-family:'Cinzel',serif;font-size:1.9rem;font-weight:900;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--teal2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.brand-tagline{font-size:0.7rem;color:var(--teal);letter-spacing:4px;text-transform:uppercase;font-weight:600;}
+
+/* ---- CARD ---- */
+.card{background:var(--card);border:1px solid rgba(0,212,170,0.15);border-radius:var(--radius);
+  padding:36px 40px;width:100%;max-width:460px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.03) inset;}
+.card-title{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:1px;}
+.card-sub{font-size:0.85rem;color:var(--gray);margin-bottom:26px;}
+
+/* ---- INPUTS ---- */
+.ig{margin-bottom:16px;}
+.ig label{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:6px;}
+.ig input,.ig select,.ig textarea{width:100%;padding:12px 15px;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(0,212,170,0.18);
+  border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.95rem;
+  transition:border-color .2s,box-shadow .2s;outline:none;resize:vertical;}
+.ig input:focus,.ig select:focus,.ig textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,170,0.1);}
+.ig select option{background:var(--bg2);}
+
+/* ---- BUTTONS ---- */
+.btn{width:100%;padding:13px 20px;border:none;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:.3px;}
+.btn-teal{background:linear-gradient(135deg,var(--teal),#007a60);color:#fff;box-shadow:0 4px 20px rgba(0,212,170,0.3);}
+.btn-teal:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,212,170,0.4);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#b8860b);color:#080d14;font-weight:800;box-shadow:0 4px 20px rgba(232,185,79,0.3);}
+.btn-gold:hover{transform:translateY(-2px);}
+.btn-outline{background:transparent;border:1.5px solid rgba(0,212,170,0.3);color:var(--teal);}
+.btn-outline:hover{background:rgba(0,212,170,0.07);}
+.btn-red{background:rgba(255,82,82,0.12);border:1.5px solid rgba(255,82,82,0.3);color:var(--red);}
+.btn+.btn{margin-top:10px;}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;}
+
+.pill{display:inline-block;padding:3px 11px;border-radius:20px;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.pill-teal{background:rgba(0,212,170,0.12);color:var(--teal);border:1px solid rgba(0,212,170,0.25);}
+.pill-gold{background:rgba(232,185,79,0.12);color:var(--gold);border:1px solid rgba(232,185,79,0.25);}
+.pill-red{background:rgba(255,82,82,0.12);color:var(--red);border:1px solid rgba(255,82,82,0.25);}
+
+/* ============ ADMIN ============ */
+#adminScreen.active{align-items:stretch;justify-content:flex-start;padding:0;}
+.admin-layout{display:flex;min-height:100vh;width:100%;}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:49;}
+.sidebar-overlay.show{display:block;}
+
+.sidebar{width:230px;background:var(--bg2);border-right:1px solid rgba(0,212,170,0.08);
+  padding:24px 16px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;
+  position:relative;z-index:50;transition:transform .3s ease;}
+.sidebar .brand{margin-bottom:28px;flex-direction:column;align-items:flex-start;gap:6px;}
+.sb-btn{background:transparent;border:none;color:var(--gray);font-family:'DM Sans',sans-serif;
+  font-size:0.88rem;font-weight:600;padding:10px 13px;border-radius:10px;cursor:pointer;
+  text-align:left;transition:all .2s;display:flex;align-items:center;gap:10px;}
+.sb-btn:hover,.sb-btn.active{background:rgba(0,212,170,0.09);color:var(--teal);}
+.sb-btn .icon{font-size:1rem;width:20px;text-align:center;}
+.admin-main{flex:1;padding:32px;overflow-y:auto;min-width:0;}
+.admin-panel{display:none;}
+.admin-panel.active{display:block;}
+
+/* Top bar with hamburger */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:10px;}
+.topbar h1{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:700;letter-spacing:1px;}
+.hamburger{display:none;background:rgba(0,212,170,0.08);border:1.5px solid rgba(0,212,170,0.2);
+  color:var(--teal);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:1.2rem;
+  font-family:'DM Sans',sans-serif;font-weight:700;flex-shrink:0;}
+
+/* Mobile: sidebar becomes a drawer */
+@media(max-width:768px){
+  .hamburger{display:flex;align-items:center;justify-content:center;}
+  .sidebar{position:fixed;top:0;left:0;height:100vh;z-index:50;transform:translateX(-100%);overflow-y:auto;}
+  .sidebar.open{transform:translateX(0);}
+  .admin-main{padding:16px;}
+  .topbar h1{font-size:1.2rem;}
+  .form-row{grid-template-columns:1fr!important;}
+  .stats-grid{grid-template-columns:1fr 1fr!important;}
+}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--card);border:1px solid rgba(0,212,170,0.1);border-radius:14px;padding:20px;text-align:center;}
+.stat-num{font-family:'Cinzel',serif;font-size:2.2rem;color:var(--teal);}
+.stat-lbl{font-size:0.72rem;color:var(--gray);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+.sec-card{background:var(--card);border:1px solid rgba(0,212,170,0.1);border-radius:14px;padding:22px;margin-bottom:20px;}
+.sec-title{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--white);letter-spacing:.5px;}
+
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--gray);font-weight:700;padding:9px 13px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.05);}
+.data-table td{padding:11px 13px;font-size:0.88rem;border-bottom:1px solid rgba(255,255,255,0.03);}
+.data-table tr:hover td{background:rgba(0,212,170,0.03);}
+
+.upload-area{border:2px dashed rgba(0,212,170,0.25);border-radius:12px;padding:32px;
+  text-align:center;cursor:pointer;transition:all .2s;background:rgba(0,212,170,0.02);}
+.upload-area:hover{border-color:var(--teal);background:rgba(0,212,170,0.06);}
+.upload-icon{font-size:2.2rem;margin-bottom:8px;}
+.upload-area p{color:var(--gray);font-size:0.88rem;}
+.upload-area strong{color:var(--teal);}
+
+.format-guide{background:rgba(0,212,170,0.03);border:1px solid rgba(0,212,170,0.12);border-radius:10px;padding:18px;margin-bottom:18px;}
+.format-guide h4{color:var(--teal);font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+.format-guide pre{font-family:'Fira Mono',monospace;font-size:0.75rem;color:#8aabbb;line-height:1.9;white-space:pre-wrap;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-row .ig{margin-bottom:0;}
+
+.q-preview{background:rgba(255,255,255,0.02);border-radius:10px;padding:13px 15px;margin-bottom:8px;border-left:3px solid var(--teal);}
+.q-preview .qt{font-size:0.9rem;margin-bottom:6px;}
+.q-preview .qo{display:flex;flex-wrap:wrap;gap:8px;}
+.q-preview .qo span{font-size:0.78rem;color:var(--gray);}
+.q-preview .qo span.correct{color:var(--teal);font-weight:700;}
+.q-preview .qexp{font-size:0.78rem;color:#6a8a9a;margin-top:5px;font-style:italic;}
+
+/* link box */
+.link-box{background:rgba(0,212,170,0.04);border:1px solid rgba(0,212,170,0.2);border-radius:10px;padding:12px 15px;
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.link-box code{font-family:'Fira Mono',monospace;font-size:0.78rem;color:var(--teal);flex:1;word-break:break-all;}
+.copy-btn{background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.2);color:var(--teal);
+  border-radius:7px;padding:5px 12px;cursor:pointer;font-size:0.78rem;font-weight:700;white-space:nowrap;}
+.copy-btn:hover{background:rgba(0,212,170,0.2);}
+
+/* ai gen */
+.ai-gen-box{background:linear-gradient(135deg,rgba(0,212,170,0.05),rgba(232,185,79,0.05));
+  border:1px solid rgba(0,212,170,0.15);border-radius:12px;padding:20px;margin-bottom:18px;}
+
+/* score tracker */
+.student-score-row{background:rgba(255,255,255,0.02);border-radius:10px;padding:12px 15px;
+  margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.04);}
+.score-bar-wrap{flex:1;height:6px;background:rgba(255,255,255,0.07);border-radius:4px;}
+.score-bar{height:100%;border-radius:4px;transition:width .4s;}
+
+/* ============ EXAM SCREEN ============ */
+#examScreen.active{padding:0;align-items:stretch;justify-content:flex-start;}
+.exam-layout{display:flex;flex-direction:column;min-height:100vh;width:100%;}
+.exam-header{background:var(--bg2);border-bottom:1px solid rgba(0,212,170,0.1);
+  padding:13px 26px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.exam-header-left{display:flex;align-items:center;gap:14px;}
+.exam-sname{font-weight:700;font-size:0.97rem;}
+
+.timer-box{background:rgba(255,82,82,0.1);border:1.5px solid rgba(255,82,82,0.25);
+  border-radius:10px;padding:7px 16px;display:flex;align-items:center;gap:8px;}
+.timer-box.warn{background:rgba(232,185,79,0.1);border-color:rgba(232,185,79,0.35);}
+.timer-box.danger{background:rgba(255,82,82,0.18);border-color:var(--red);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.timer-val{font-family:'Fira Mono',monospace;font-size:1.25rem;color:var(--white);}
+
+.exam-body{display:flex;flex:1;overflow:hidden;}
+.exam-sidebar{width:190px;background:var(--bg2);border-right:1px solid rgba(255,255,255,0.05);
+  padding:18px 12px;overflow-y:auto;flex-shrink:0;}
+.exam-sidebar h3{font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray);font-weight:700;margin-bottom:10px;}
+.q-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.qnb{width:100%;aspect-ratio:1;border:1.5px solid rgba(255,255,255,0.08);border-radius:7px;
+  background:transparent;color:var(--gray);font-family:'DM Sans',sans-serif;
+  font-size:0.75rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.qnb.answered{background:rgba(0,212,170,0.13);border-color:var(--teal);color:var(--teal);}
+.qnb.current{background:var(--teal);border-color:var(--teal);color:#080d14;}
+.qnb.flagged{background:rgba(232,185,79,0.13);border-color:var(--gold);color:var(--gold);}
+
+.exam-main{flex:1;padding:28px 32px;overflow-y:auto;}
+.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.q-counter{font-size:0.82rem;color:var(--gray);font-weight:600;}
+.q-actions{display:flex;gap:8px;align-items:center;}
+.flag-btn{background:transparent;border:1.5px solid rgba(232,185,79,0.25);color:var(--gold);
+  border-radius:8px;padding:5px 13px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:0.78rem;font-weight:700;transition:all .15s;}
+.flag-btn.flagged,.flag-btn:hover{background:rgba(232,185,79,0.08);border-color:var(--gold);}
+.calc-btn{background:rgba(0,212,170,0.08);border:1.5px solid rgba(0,212,170,0.2);color:var(--teal);
+  border-radius:8px;padding:5px 13px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:0.78rem;font-weight:700;}
+
+.prog-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:18px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;transition:width .3s;}
+
+.q-text-box{background:rgba(255,255,255,0.03);border-radius:13px;padding:22px 26px;margin-bottom:22px;
+  font-size:1.02rem;line-height:1.75;border:1px solid rgba(255,255,255,0.06);}
+.q-num-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--teal);font-weight:700;margin-bottom:8px;}
+
+.options-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.opt-btn{display:flex;align-items:center;gap:13px;background:rgba(255,255,255,0.025);
+  border:1.5px solid rgba(255,255,255,0.08);border-radius:11px;padding:13px 17px;
+  cursor:pointer;transition:all .18s;text-align:left;width:100%;
+  font-family:'DM Sans',sans-serif;color:var(--white);font-size:0.95rem;}
+.opt-btn:hover{border-color:rgba(0,212,170,0.35);background:rgba(0,212,170,0.05);}
+.opt-btn.selected{border-color:var(--teal);background:rgba(0,212,170,0.1);}
+.opt-btn.correct{border-color:var(--teal);background:rgba(0,212,170,0.15);}
+.opt-btn.wrong{border-color:var(--red);background:rgba(255,82,82,0.08);}
+.opt-btn.reveal-correct{border-color:var(--teal);background:rgba(0,212,170,0.07);}
+.opt-letter{width:30px;height:30px;border-radius:7px;flex-shrink:0;
+  background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:0.85rem;transition:all .18s;}
+.opt-btn.selected .opt-letter{background:var(--teal);color:#080d14;}
+.opt-btn.correct .opt-letter{background:var(--teal);color:#080d14;}
+.opt-btn.wrong .opt-letter{background:var(--red);color:#fff;}
+.opt-btn.reveal-correct .opt-letter{background:var(--teal);color:#080d14;}
+
+.exam-nav{display:flex;gap:10px;}
+.exam-nav .btn{width:auto;padding:11px 22px;flex:1;}
+
+/* ============ REVIEW PANEL ============ */
+.exp-box{display:none;background:rgba(0,212,170,0.05);border:1px solid rgba(0,212,170,0.2);
+  border-radius:11px;padding:16px 20px;margin-bottom:18px;animation:fadeIn .3s ease;}
+.exp-box.show{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.exp-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--teal);font-weight:700;margin-bottom:7px;}
+.exp-text{font-size:0.9rem;line-height:1.65;color:#b0c8d0;}
+
+/* ============ RESULT ============ */
+.result-card{max-width:520px;text-align:center;}
+.score-ring{width:140px;height:140px;border-radius:50%;margin:0 auto 20px;
+  background:conic-gradient(var(--teal) 0%,var(--teal) var(--pct,0%),rgba(255,255,255,0.06) var(--pct,0%));
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(0,212,170,0.08);}
+.score-inner{width:112px;height:112px;border-radius:50%;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-num{font-family:'Cinzel',serif;font-size:2.4rem;color:var(--teal);line-height:1;}
+.score-lbl{font-size:0.65rem;color:var(--gray);letter-spacing:1.5px;text-transform:uppercase;}
+.result-grade{font-family:'Cinzel',serif;font-size:1.8rem;letter-spacing:2px;margin-bottom:6px;}
+.result-msg{color:var(--gray);font-size:0.92rem;margin-bottom:20px;line-height:1.6;}
+.result-push{background:rgba(232,185,79,0.07);border:1px solid rgba(232,185,79,0.2);
+  border-radius:11px;padding:15px 18px;margin-bottom:20px;color:var(--gold);
+  font-weight:600;font-size:0.92rem;line-height:1.6;font-style:italic;}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.r-stat{background:rgba(255,255,255,0.03);border-radius:10px;padding:13px;}
+.r-stat-num{font-family:'Cinzel',serif;font-size:1.7rem;}
+.r-stat-lbl{font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;}
+.r-stat-num.g{color:var(--teal)}.r-stat-num.r{color:var(--red)}.r-stat-num.y{color:var(--gold)}
+
+/* ============ LEADERBOARD ============ */
+.lb-row{display:flex;align-items:center;gap:12px;padding:11px 14px;
+  background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:7px;
+  border:1px solid rgba(255,255,255,0.04);transition:all .15s;}
+.lb-row:hover{background:rgba(0,212,170,0.05);}
+.lb-rank{font-family:'Cinzel',serif;font-size:1.2rem;width:32px;text-align:center;}
+.lb-rank.gold{color:var(--gold)}.lb-rank.silver{color:#b0bec5}.lb-rank.bronze{color:var(--bronze)}
+.lb-avatar{width:36px;height:36px;border-radius:50%;background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;flex-shrink:0;}
+.lb-info{flex:1;}
+.lb-name{font-weight:700;font-size:0.92rem;}
+.lb-detail{font-size:0.75rem;color:var(--gray);}
+.lb-score{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--teal);}
+
+/* ============ CALCULATOR ============ */
+.calc-overlay{display:none;position:fixed;bottom:80px;right:24px;z-index:200;
+  background:var(--bg2);border:1px solid rgba(0,212,170,0.2);border-radius:16px;
+  padding:16px;box-shadow:0 8px 40px rgba(0,0,0,0.5);width:240px;}
+.calc-overlay.show{display:block;}
+.calc-display{background:rgba(0,0,0,0.4);border-radius:10px;padding:10px 14px;
+  font-family:'Fira Mono',monospace;font-size:1.3rem;text-align:right;
+  margin-bottom:12px;color:var(--teal);min-height:44px;word-break:break-all;}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.calc-btn-item{padding:10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;
+  background:rgba(255,255,255,0.04);color:var(--white);font-family:'DM Sans',sans-serif;
+  font-size:0.88rem;font-weight:700;cursor:pointer;transition:all .15s;text-align:center;}
+.calc-btn-item:hover{background:rgba(0,212,170,0.1);border-color:rgba(0,212,170,0.2);}
+.calc-btn-item.op{color:var(--teal);}
+.calc-btn-item.eq{background:linear-gradient(135deg,var(--teal),#007a60);color:#080d14;border-color:transparent;}
+.calc-btn-item.clr{color:var(--red);}
+
+/* ============ MODAL ============ */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;
+  align-items:center;justify-content:center;padding:24px;}
+.modal-ov.show{display:flex;}
+.modal-box{background:var(--bg2);border:1px solid rgba(0,212,170,0.18);border-radius:var(--radius);
+  padding:32px;max-width:400px;width:100%;text-align:center;}
+.modal-icon{font-size:2.8rem;margin-bottom:12px;}
+.modal-title{font-family:'Cinzel',serif;font-size:1.5rem;margin-bottom:7px;letter-spacing:1px;}
+.modal-text{color:var(--gray);font-size:0.9rem;margin-bottom:22px;line-height:1.6;}
+.modal-btns{display:flex;gap:10px;}
+.modal-btns .btn{flex:1;}
+
+/* ============ TOAST ============ */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);
+  background:var(--bg2);border:1px solid rgba(0,212,170,0.25);border-radius:10px;
+  padding:11px 22px;font-size:0.88rem;font-weight:700;z-index:9999;
+  transition:transform .3s;color:var(--teal);box-shadow:0 4px 24px rgba(0,0,0,0.4);}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* AI generating spinner */
+.ai-spinner{display:none;text-align:center;padding:24px;}
+.ai-spinner.show{display:block;}
+.spinner{width:40px;height:40px;border:3px solid rgba(0,212,170,0.15);border-top-color:var(--teal);
+  border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* mock set cards */
+.mock-set-card{background:var(--card);border:1px solid rgba(0,212,170,0.12);border-radius:13px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:14px;transition:all .2s;}
+.mock-set-card:hover{border-color:rgba(0,212,170,0.3);background:rgba(0,212,170,0.03);}
+.mock-set-icon{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--teal),#007a60);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.mock-set-info{flex:1;}
+.mock-set-name{font-weight:700;font-size:0.95rem;margin-bottom:3px;}
+.mock-set-meta{font-size:0.76rem;color:var(--gray);}
+.mock-set-actions{display:flex;gap:8px;align-items:center;}
+
+/* subject combination selector */
+.subj-combo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px;}
+.subj-combo-btn{background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);border-radius:11px;padding:14px;cursor:pointer;transition:all .18s;text-align:center;font-family:'DM Sans',sans-serif;color:var(--gray);font-size:0.88rem;font-weight:600;}
+.subj-combo-btn:hover{border-color:rgba(0,212,170,0.3);color:var(--white);}
+.subj-combo-btn.selected{border-color:var(--teal);background:rgba(0,212,170,0.1);color:var(--teal);}
+.subj-combo-btn.locked{border-color:rgba(232,185,79,0.4);background:rgba(232,185,79,0.08);color:var(--gold);cursor:default;}
+.subj-combo-btn .subj-emoji{font-size:1.5rem;display:block;margin-bottom:5px;}
+.subj-section-divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+.subj-section-divider span{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray);font-weight:700;white-space:nowrap;}
+.subj-section-divider::before,.subj-section-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.07);}
+
+/* exam subject tab bar */
+.subj-tab-bar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;flex-shrink:0;}
+.subj-tab{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:700;color:var(--gray);white-space:nowrap;transition:all .15s;}
+.subj-tab.active{background:var(--teal);border-color:var(--teal);color:#080
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,212,170,0.2);border-radius:5px;}
+
+@media(max-width:700px){
+  .admin-layout{flex-direction:column;}
+  .sidebar{width:100%;flex-direction:row;flex-wrap:wrap;padding:12px;}
+  .admin-main{padding:16px;}
+  .form-row{grid-template-columns:1fr;}
+  .exam-sidebar{display:none;}
+  .card{padding:22px 18px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ======== LOGIN ======== -->
+<div class="screen active" id="loginScreen">
+  <div style="text-align:center;margin-bottom:24px;">
+    <div class="brand" style="justify-content:center;margin-bottom:6px;">
+      <div class="brand-icon">🔦</div>
+      <div>
+        <div class="brand-name">BEACON NEXUS</div>
+        <div class="brand-tagline">JAMB Excellence Portal</div>
+      </div>
+    </div>
+    <p style="color:var(--gray);font-size:0.85rem;">Nigeria's most focused UTME preparation platform</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Student Login</div>
+    <div class="card-sub">Enter your credentials to begin your exam</div>
+    <div class="ig"><label>Full Name</label><input type="text" id="loginName" placeholder="e.g. Chukwuemeka Obi"/></div>
+    <div class="ig"><label>PIN Code</label><input type="password" id="loginPin" placeholder="Your assigned PIN" maxlength="8"/></div>
+    <div class="ig">
+      <label>Subject</label>
+      <select id="loginSubject">
+        <option value="">-- Select Subject --</option>
+        <option value="mathematics">Mathematics</option>
+        <option value="english">English Language</option>
+        <option value="physics">Physics</option>
+        <option value="chemistry">Chemistry</option>
+        <option value="biology">Biology</option>
+        <option value="government">Government</option>
+        <option value="economics">Economics</option>
+        <option value="literature">Literature in English</option>
+        <option value="commerce">Commerce</option>
+        <option value="accounting">Financial Accounting</option>
+      </select>
+    </div>
+    <button class="btn btn-teal" onclick="studentLogin()">🚀 Start Exam</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="showScreen('adminLoginScreen')">⚙️ Admin Portal</button>
+  </div>
+</div>
+
+<!-- ======== ADMIN LOGIN ======== -->
+<div class="screen" id="adminLoginScreen">
+  <div class="card">
+    <div class="brand" style="margin-bottom:20px;">
+      <div class="brand-icon">🔦</div>
+      <div><div class="brand-name">BEACON NEXUS</div><div class="brand-tagline">Admin Access</div></div>
+    </div>
+    <div class="ig"><label>Admin Password</label><input type="password" id="adminPwd" placeholder="Enter password" onkeydown="if(event.key==='Enter')adminLogin()"/></div>
+    <button class="btn btn-teal" onclick="adminLogin()">🔐 Login</button>
+    <button class="btn btn-outline" onclick="showScreen('loginScreen')">← Back</button>
+  </div>
+</div>
+
+<!-- ======== ADMIN SCREEN ======== -->
+<div class="screen" id="adminScreen">
+  <div class="admin-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="adminSidebar">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+        <div class="brand" style="margin-bottom:0;">
+          <div class="brand-icon" style="width:38px;height:38px;font-size:18px;">🔦</div>
+          <div><div class="brand-name" style="font-size:1.1rem;">BEACON NEXUS</div></div>
+        </div>
+        <button onclick="closeSidebar()" style="display:none;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.2);color:var(--red);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:1rem;" id="sidebarCloseBtn">✕</button>
+      </div>
+      <button class="sb-btn active" onclick="adminTab('dashboard',this);closeSidebar()"><span class="icon">📊</span>Dashboard</button>
+      <button class="sb-btn" onclick="adminTab('mocksets',this);closeSidebar()"><span class="icon">📋</span>Mock Sets</button>
+      <button class="sb-btn" onclick="adminTab('questions',this);closeSidebar()"><span class="icon">📝</span>Questions</button>
+      <button class="sb-btn" onclick="adminTab('ai',this);closeSidebar()"><span class="icon">🤖</span>AI Generator</button>
+      <button class="sb-btn" onclick="adminTab('students',this);closeSidebar()"><span class="icon">👥</span>Students</button>
+      <button class="sb-btn" onclick="adminTab('scores',this);closeSidebar()"><span class="icon">📈</span>Score Tracker</button>
+      <button class="sb-btn" onclick="adminTab('leaderboard',this);closeSidebar()"><span class="icon">🏆</span>Leaderboard</button>
+      <button class="sb-btn" onclick="adminTab('certificates',this);closeSidebar()"><span class="icon">🎖️</span>Certificates</button>
+      <button class="sb-btn" onclick="adminTab('settings',this);closeSidebar()"><span class="icon">⚙️</span>Settings</button>
+      <div style="flex:1;"></div>
+      <button class="sb-btn" onclick="showScreen('homeScreen');closeSidebar()"><span class="icon">🚪</span>Exit Admin</button>
+    </div>
+    <div class="admin-main">
+
+      <!-- DASHBOARD -->
+      <div class="admin-panel active" id="panel-dashboard">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>📊 Dashboard</h1><span class="pill pill-teal">Admin</span></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-num" id="statStudents">0</div><div class="stat-lbl">Students</div></div>
+          <div class="stat-card"><div class="stat-num" id="statQuestions">0</div><div class="stat-lbl">Questions</div></div>
+          <div class="stat-card"><div class="stat-num" id="statAttempts">0</div><div class="stat-lbl">Attempts</div></div>
+          <div class="stat-card"><div class="stat-num" id="statAvg">—</div><div class="stat-lbl">Avg Score</div></div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-title">Recent Activity</div>
+          <table class="data-table">
+            <thead><tr><th>Student</th><th>Subject</th><th>Score</th><th>Date</th></tr></thead>
+            <tbody id="recentActivity"><tr><td colspan="4" style="color:var(--gray);text-align:center;padding:20px;">No activity yet</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MOCK SETS -->
+      <div class="admin-panel" id="panel-mocksets">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>📋 Mock Sets</h1></div>
+
+        <!-- Create Single Subject Mock -->
+        <div class="sec-card">
+          <div class="sec-title">➕ Create Single-Subject Mock</div>
+          <div class="form-row">
+            <div class="ig"><label>Mock Name</label><input type="text" id="msName" placeholder="e.g. English Mock 1"/></div>
+            <div class="ig"><label>Subject</label>
+              <select id="msSubject">
+                <option value="mathematics">Mathematics</option>
+                <option value="english">English Language</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="biology">Biology</option>
+                <option value="government">Government</option>
+                <option value="economics">Economics</option>
+                <option value="literature">Literature</option>
+                <option value="commerce">Commerce</option>
+                <option value="accounting">Accounting</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="ig"><label>Number of Questions</label><input type="number" id="msQCount" value="40" min="5" max="100"/></div>
+            <div class="ig"><label>Time Limit (minutes)</label><input type="number" id="msTime" value="45" min="10" max="180"/></div>
+          </div>
+          <button class="btn btn-teal" style="width:auto;padding:10px 24px;" onclick="createMockSet()">✅ Create Mock & Get Link</button>
+        </div>
+
+        <!-- Create Combined Mock -->
+        <div class="sec-card" style="border-color:rgba(124,58,237,0.2);">
+          <div class="sec-title">🎯 Create Combined (4-Subject) Mock</div>
+          <div class="form-row">
+            <div class="ig"><label>Mock Name</label><input type="text" id="cmName" placeholder="e.g. Full JAMB Mock 1"/></div>
+            <div class="ig"><label>Time Limit (minutes)</label><input type="number" id="cmTime" value="120" min="30" max="300"/></div>
+          </div>
+          <div class="form-row">
+            <div class="ig"><label>English Questions</label><input type="number" id="cmEnglish" value="20" min="5" max="60"/></div>
+            <div class="ig"><label>Questions per Other Subject</label><input type="number" id="cmOthers" value="20" min="5" max="60"/></div>
+          </div>
+          <button class="btn btn-purple" style="width:auto;padding:10px 24px;" onclick="createCombinedMock()">🎯 Create Combined Mock & Get Link</button>
+        </div>
+
+        <!-- All Mock Sets & Links -->
+        <div class="sec-card">
+          <div class="sec-title">🔗 All Mock Sets & Student Links</div>
+          <p style="color:var(--gray);font-size:0.85rem;margin-bottom:16px;line-height:1.6;">Copy and send these links directly to your students. Each link opens the exam for that specific mock.</p>
+          <div id="mockSetList"><p style="color:var(--gray);text-align:center;padding:24px;">No mock sets yet. Create one above ☝️</p></div>
+        </div>
+      </div>
+
+      <!-- QUESTIONS -->
+      <div class="admin-panel" id="panel-questions">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>📝 Question Bank</h1><span id="totalQBadge" class="pill pill-teal">0 Questions</span></div>
+        <div class="sec-card">
+          <div class="sec-title">Upload via Word Doc (.txt format)</div>
+          <div class="format-guide">
+            <h4>📋 Format Guide — save your Word doc as .txt</h4>
+            <pre>Q: What is the chemical symbol for water?
+A: H2O
+B: CO2
+C: NaCl
+D: O2
+ANSWER: A
+EXPLANATION: Water has 2 hydrogen atoms bonded to 1 oxygen atom.
+SUBJECT: chemistry
+
+---
+
+Q: Next question here...</pre>
+          </div>
+          <div class="upload-area" onclick="document.getElementById('docUpload').click()">
+            <div class="upload-icon">📄</div>
+            <p><strong>Click to upload .txt file</strong> (saved from Word)</p>
+            <p>All questions parsed and added automatically</p>
+            <input type="file" id="docUpload" accept=".txt" style="display:none" onchange="handleDocUpload(event)"/>
+          </div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-title">Add Single Question</div>
+          <div class="form-row">
+            <div class="ig"><label>Subject</label>
+              <select id="qSubject"><option value="mathematics">Mathematics</option><option value="english">English</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option><option value="government">Government</option><option value="economics">Economics</option><option value="literature">Literature</option><option value="commerce">Commerce</option><option value="accounting">Accounting</option></select>
+            </div>
+          </div>
+          <div class="ig"><label>Question</label><input type="text" id="qText" placeholder="Enter question"/></div>
+          <div class="form-row">
+            <div class="ig"><label>Option A</label><input type="text" id="qA"/></div>
+            <div class="ig"><label>Option B</label><input type="text" id="qB"/></div>
+            <div class="ig"><label>Option C</label><input type="text" id="qC"/></div>
+            <div class="ig"><label>Option D</label><input type="text" id="qD"/></div>
+          </div>
+          <div class="form-row">
+            <div class="ig"><label>Correct Answer</label><select id="qAnswer"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+          </div>
+          <div class="ig"><label>Explanation</label><input type="text" id="qExp" placeholder="Why is this the correct answer?"/></div>
+          <button class="btn btn-teal" style="width:auto;padding:10px 24px;" onclick="addSingleQ()">➕ Add Question</button>
+        </div>
+        <div class="sec-card">
+          <div class="sec-title">Question Bank (showing last 30)</div>
+          <div style="margin-bottom:12px;">
+            <select id="qFilterSubject" onchange="renderQuestions()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,170,0.2);border-radius:8px;padding:7px 12px;color:var(--white);font-family:'DM Sans',sans-serif;">
+              <option value="">All Subjects</option>
+              <option value="mathematics">Mathematics</option><option value="english">English</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option><option value="government">Government</option><option value="economics">Economics</option><option value="literature">Literature</option><option value="commerce">Commerce</option><option value="accounting">Accounting</option>
+            </select>
+          </div>
+          <div id="questionList"><p style="color:var(--gray);text-align:center;padding:20px;">No questions yet</p></div>
+        </div>
+      </div>
+
+      <!-- AI GENERATOR -->
+      <div class="admin-panel" id="panel-ai">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>🤖 AI Generator</h1></div>
+        <div class="sec-card">
+          <div class="sec-title">Generate JAMB-Standard Questions</div>
+          <p style="color:var(--gray);font-size:0.88rem;margin-bottom:18px;line-height:1.6;">
+            Powered by Claude AI. Type a topic or subject and instantly generate authentic JAMB-style questions with explanations.<br>
+            <span id="localFileNotice" style="display:none;color:var(--gold);">⚠️ <strong>Note:</strong> AI generation requires the file to be hosted online (e.g. Netlify). It will not work when opened from phone storage.</span>
+          </p>
+          <div class="form-row">
+            <div class="ig"><label>Subject</label>
+              <select id="aiSubject"><option value="mathematics">Mathematics</option><option value="english">English Language</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option><option value="government">Government</option><option value="economics">Economics</option><option value="literature">Literature</option><option value="commerce">Commerce</option><option value="accounting">Accounting</option></select>
+            </div>
+            <div class="ig"><label>Number of Questions</label>
+              <select id="aiCount"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="30">30</option></select>
+            </div>
+          </div>
+          <div class="ig"><label>Topic (optional)</label><input type="text" id="aiTopic" placeholder="e.g. Quadratic Equations, Cell Biology, Federalism..."/></div>
+          <button class="btn btn-gold" style="width:auto;padding:11px 28px;" onclick="generateAIQuestions()">⚡ Generate Questions</button>
+          <div class="ai-spinner" id="aiSpinner">
+            <div class="spinner"></div>
+            <p style="color:var(--gray);font-size:0.88rem;">Generating JAMB-standard questions...</p>
+          </div>
+          <div id="aiPreview" style="margin-top:18px;"></div>
+        </div>
+      </div>
+
+      <!-- STUDENTS -->
+      <div class="admin-panel" id="panel-students">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>👥 Students</h1></div>
+        <div class="sec-card">
+          <div class="sec-title">Add Single Student</div>
+          <div class="form-row">
+            <div class="ig"><label>Full Name</label><input type="text" id="sName" placeholder="Student full name"/></div>
+            <div class="ig"><label>PIN (4–8 digits)</label><input type="text" id="sPin" placeholder="e.g. 123456" maxlength="8"/></div>
+          </div>
+          <button class="btn btn-teal" style="width:auto;padding:10px 24px;" onclick="addStudent()">➕ Add Student</button>
+        </div>
+        <div class="sec-card">
+          <div class="sec-title">Bulk Upload via CSV (from Google Form)</div>
+          <div class="format-guide">
+            <h4>📋 CSV Format (Google Form export)</h4>
+            <pre>Full Name,PIN
+Adebayo Emmanuel,123456
+Chukwu Ngozi,234567
+Yusuf Fatimah,345678</pre>
+          </div>
+          <div class="upload-area" onclick="document.getElementById('csvUpload').click()">
+            <div class="upload-icon">📊</div>
+            <p><strong>Click to upload CSV file</strong></p>
+            <p>Students added automatically with their PINs</p>
+            <input type="file" id="csvUpload" accept=".csv" style="display:none" onchange="handleCSV(event)"/>
+          </div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-title">Registered Students (<span id="sCount">0</span>)</div>
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Name</th><th>PIN</th><th>Attempts</th><th>Best Score</th><th></th></tr></thead>
+            <tbody id="studentList"><tr><td colspan="6" style="color:var(--gray);text-align:center;padding:20px;">No students yet</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SCORE TRACKER -->
+      <div class="admin-panel" id="panel-scores">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>📈 Score Tracker</h1></div>
+        <div class="sec-card">
+          <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+            <select id="scoreFilterSubj" onchange="renderScores()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,170,0.2);border-radius:8px;padding:7px 12px;color:var(--white);font-family:'DM Sans',sans-serif;">
+              <option value="">All Subjects</option>
+              <option value="mathematics">Mathematics</option><option value="english">English</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="biology">Biology</option><option value="government">Government</option><option value="economics">Economics</option><option value="literature">Literature</option>
+            </select>
+            <select id="scoreFilterStud" onchange="renderScores()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,170,0.2);border-radius:8px;padding:7px 12px;color:var(--white);font-family:'DM Sans',sans-serif;">
+              <option value="">All Students</option>
+            </select>
+          </div>
+          <div id="scoreList"><p style="color:var(--gray);text-align:center;padding:20px;">No results yet</p></div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="admin-panel" id="panel-leaderboard">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>🏆 Leaderboard</h1></div>
+        <div class="sec-card">
+          <div class="sec-title">Top Performers</div>
+          <div id="leaderboardList"><p style="color:var(--gray);text-align:center;padding:20px;">No results yet</p></div>
+        </div>
+      </div>
+
+      <!-- SUBJECT LINKS -->
+      <div class="admin-panel" id="panel-links">
+        <div class="topbar"><h1>🔗 Subject Links</h1></div>
+        <div class="sec-card">
+          <div class="sec-title">Direct Exam Links</div>
+          <p style="color:var(--gray);font-size:0.88rem;margin-bottom:18px;line-height:1.6;">
+            Share these links with students. Each link opens the login page with the subject pre-selected. Students only need to enter their name and PIN.
+          </p>
+          <div id="subjectLinks"></div>
+        </div>
+      </div>
+
+      <!-- CERTIFICATES -->
+      <div class="admin-panel" id="panel-certificates">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>🎖️ Certificates</h1></div>
+        <div class="sec-card">
+          <p style="color:var(--gray);font-size:0.88rem;margin-bottom:18px;line-height:1.6;">
+            Certificates are <strong style="color:var(--gold);">admin-issued only</strong> and given selectively to reward top performers.<br>
+            🥇 <strong>Gold</strong> — 90% and above &nbsp;|&nbsp; 🥈 <strong>Silver</strong> — 85–89% &nbsp;|&nbsp; 🥉 <strong>Bronze</strong> — 81–84%
+          </p>
+          <div class="form-row">
+            <div class="ig"><label>Select Student</label><select id="certStudent"><option value="">-- Select --</option></select></div>
+            <div class="ig"><label>Subject</label>
+              <select id="certSubject"><option value="Mathematics">Mathematics</option><option value="English Language">English Language</option><option value="Physics">Physics</option><option value="Chemistry">Chemistry</option><option value="Biology">Biology</option><option value="Government">Government</option><option value="Economics">Economics</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="ig"><label>Score (%)</label><input type="number" id="certScore" placeholder="e.g. 92" min="0" max="100"/></div>
+            <div class="ig"><label>Date</label><input type="date" id="certDate"/></div>
+          </div>
+          <div style="margin-bottom:18px;">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-gold" style="width:auto;padding:10px 22px;" onclick="generateCert('gold')">🥇 Gold Certificate</button>
+              <button class="btn btn-outline" style="width:auto;padding:10px 22px;" onclick="generateCert('silver')">🥈 Silver Certificate</button>
+              <button class="btn btn-outline" style="width:auto;padding:10px 22px;border-color:rgba(205,140,74,0.4);color:var(--bronze);" onclick="generateCert('bronze')">🥉 Bronze Certificate</button>
+            </div>
+          </div>
+          <div id="certPreview"></div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-title">Eligible Students (by latest score)</div>
+          <div id="eligibleList"><p style="color:var(--gray);font-size:0.88rem;">No results yet</p></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="admin-panel" id="panel-settings">
+        <div class="topbar"><button class="hamburger" onclick="openSidebar()">☰</button><h1>⚙️ Settings</h1></div>
+        <div class="sec-card">
+          <div class="sec-title">Exam Configuration</div>
+          <div class="form-row">
+            <div class="ig"><label>Questions Per Exam</label><input type="number" id="setQ" value="40" min="5" max="300"/></div>
+            <div class="ig"><label>Time Limit (minutes)</label><input type="number" id="setT" value="45" min="10" max="180"/></div>
+          </div>
+          <div class="ig"><label>Max Students Per Subject</label><input type="number" id="setMax" value="300" min="50"/></div>
+          <div class="ig"><label>Change Admin Password</label><input type="password" id="setPass" placeholder="New password"/></div>
+          <button class="btn btn-teal" style="width:auto;padding:10px 24px;" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+
+        <div class="sec-card" style="border-color:rgba(0,212,170,0.2);">
+          <div class="sec-title">🤖 AI Generator — API Key</div>
+          <p style="color:var(--gray);font-size:0.85rem;margin-bottom:16px;line-height:1.7;">
+            Required for the AI Question Generator. Get a free key at <strong style="color:var(--teal);">console.anthropic.com</strong> → API Keys.<br>
+            Your key is stored only in your browser and is never shared with anyone.
+          </p>
+          <div class="ig">
+            <label>Anthropic API Key</label>
+            <input type="password" id="setApiKey" placeholder="sk-ant-api03-..." autocomplete="off"/>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-teal" style="width:auto;padding:10px 22px;" onclick="saveApiKey()">🔑 Save API Key</button>
+            <span id="apiKeyStatus" style="font-size:0.82rem;color:var(--gray);"></span>
+          </div>
+        </div>
+        <div class="sec-card" style="border-color:rgba(255,82,82,0.15);">
+          <div class="sec-title" style="color:var(--red);">⚠️ Danger Zone</div>
+          <button class="btn btn-red" style="width:auto;padding:9px 20px;" onclick="clearAll()">🗑️ Clear All Results</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ======== EXAM SCREEN ======== -->
+<div class="screen" id="examScreen">
+  <div class="exam-layout">
+    <div class="exam-header">
+      <div class="exam-header-left">
+        <div class="brand-icon" style="width:34px;height:34px;font-size:16px;">🔦</div>
+        <div>
+          <div class="exam-sname" id="examSName"></div>
+          <span class="pill pill-teal" id="examSubPill"></span>
+        </div>
+      </div>
+      <div class="timer-box" id="timerBox">
+        <span>⏱️</span><span class="timer-val" id="timerVal">45:00</span>
+      </div>
+    </div>
+    <div class="exam-body">
+      <div class="exam-sidebar">
+        <h3>Questions</h3>
+        <div class="q-grid" id="qGrid"></div>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:rgba(0,212,170,0.13);border:1px solid var(--teal);"></div><span style="font-size:0.72rem;color:var(--gray);">Answered</span></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:rgba(232,185,79,0.13);border:1px solid var(--gold);"></div><span style="font-size:0.72rem;color:var(--gray);">Flagged</span></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:var(--teal);"></div><span style="font-size:0.72rem;color:var(--gray);">Current</span></div>
+        </div>
+      </div>
+      <div class="exam-main">
+        <div class="prog-wrap"><div class="prog-fill" id="examProg" style="width:0%"></div></div>
+        <div class="q-header">
+          <span class="q-counter" id="qCounter">Question 1 of 40</span>
+          <div class="q-actions">
+            <button class="calc-btn" onclick="toggleCalc()">🧮 Calc</button>
+            <button class="flag-btn" id="flagBtn" onclick="toggleFlag()">🚩 Flag</button>
+          </div>
+        </div>
+        <div class="q-text-box">
+          <div class="q-num-label" id="qNumLbl">Question 1</div>
+          <div id="qText">Loading...</div>
+        </div>
+        <div class="options-list" id="optsList"></div>
+        <div class="exp-box" id="expBox">
+          <div class="exp-title">📖 Explanation</div>
+          <div class="exp-text" id="expText"></div>
+        </div>
+        <div class="exam-nav">
+          <button class="btn btn-outline" id="prevBtn" onclick="navigate(-1)">← Prev</button>
+          <button class="btn btn-teal" id="nextBtn" onclick="navigate(1)">Next →</button>
+          <button class="btn btn-gold" id="submitBtn" onclick="showSubmitModal()" style="display:none;">🏁 Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Calculator -->
+<div class="calc-overlay" id="calcOverlay">
+  <div class="calc-display" id="calcDisplay">0</div>
+  <div class="calc-grid">
+    <button class="calc-btn-item clr" onclick="calcInput('C')">C</button>
+    <button class="calc-btn-item op" onclick="calcInput('(')">(</button>
+    <button class="calc-btn-item op" onclick="calcInput(')')">)</button>
+    <button class="calc-btn-item op" onclick="calcInput('/')">÷</button>
+    <button class="calc-btn-item" onclick="calcInput('7')">7</button>
+    <button class="calc-btn-item" onclick="calcInput('8')">8</button>
+    <button class="calc-btn-item" onclick="calcInput('9')">9</button>
+    <button class="calc-btn-item op" onclick="calcInput('*')">×</button>
+    <button class="calc-btn-item" onclick="calcInput('4')">4</button>
+    <button class="calc-btn-item" onclick="calcInput('5')">5</button>
+    <button class="calc-btn-item" onclick="calcInput('6')">6</button>
+    <button class="calc-btn-item op" onclick="calcInput('-')">−</button>
+    <button class="calc-btn-item" onclick="calcInput('1')">1</button>
+    <button class="calc-btn-item" onclick="calcInput('2')">2</button>
+    <button class="calc-btn-item" onclick="calcInput('3')">3</button>
+    <button class="calc-btn-item op" onclick="calcInput('+')">+</button>
+    <button class="calc-btn-item" onclick="calcInput('0')" style="grid-column:span 2;">0</button>
+    <button class="calc-btn-item op" onclick="calcInput('.')">.</button>
+    <button class="calc-btn-item eq" onclick="calcEquals()">=</button>
+  </div>
+</div>
+
+<!-- ======== RESULT ======== -->
+<div class="screen" id="resultScreen">
+  <div class="card result-card">
+    <div style="font-size:2.2rem;margin-bottom:8px;" id="resultEmoji">🎉</div>
+    <div class="score-ring" id="scoreRing">
+      <div class="score-inner">
+        <div class="score-num" id="scoreNum">0%</div>
+        <div class="score-lbl">Score</div>
+      </div>
+    </div>
+    <div class="result-grade" id="resultGrade">OUTSTANDING</div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="result-push" id="resultPush"></div>
+    <div class="result-stats">
+      <div class="r-stat"><div class="r-stat-num g" id="rC">0</div><div class="r-stat-lbl">Correct</div></div>
+      <div class="r-stat"><div class="r-stat-num r" id="rW">0</div><div class="r-stat-lbl">Wrong</div></div>
+      <div class="r-stat"><div class="r-stat-num y" id="rS">0</div><div class="r-stat-lbl">Skipped</div></div>
+    </div>
+    <button class="btn btn-teal" onclick="startReview()">📖 Review Answers</button>
+    <button class="btn btn-outline" onclick="showScreen('loginScreen')">🔄 New Exam</button>
+  </div>
+</div>
+
+<!-- ======== SUBMIT MODAL ======== -->
+<div class="modal-ov" id="submitModal">
+  <div class="modal-box">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Submit Exam?</div>
+    <div class="modal-text" id="submitModalText">Are you sure you want to submit?</div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('submitModal')">← Back</button>
+      <button class="btn btn-gold" onclick="submitExam()">✅ Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const SUBJECTS = ['mathematics','english','physics','chemistry','biology','government','economics','literature','commerce','accounting'];
+let DB = {
+  students: [],
+  questions: Object.fromEntries(SUBJECTS.map(s=>[s,[]])),
+  mockSets: [],
+  combinedMocks: [],
+  results: [],
+  settings: { questionsPerExam:40, timeLimitMinutes:45, maxStudents:300, adminPassword:'admin123' }
+};
+function loadDB(){ try{ const d=localStorage.getItem('bnDB'); if(d){ const p=JSON.parse(d); DB={...DB,...p}; SUBJECTS.forEach(s=>{ if(!DB.questions[s]) DB.questions[s]=[]; }); if(!DB.mockSets) DB.mockSets=[]; if(!DB.combinedMocks) DB.combinedMocks=[]; } }catch(e){} }
+function saveDB(){ try{ localStorage.setItem('bnDB',JSON.stringify(DB)); }catch(e){} }
+loadDB();
+
+// ============================================================
+// NAV
+// ============================================================
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function adminTab(tab,btn){
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if(tab==='leaderboard') renderLeaderboard();
+  if(tab==='settings'){
+    // Show API key status
+    setTimeout(()=>{
+      const st=document.getElementById('apiKeyStatus');
+      if(st) st.textContent=DB.settings.apiKey?'🔑 API Key is saved and active':'⚠️ No API key saved yet';
+      if(st) st.style.color=DB.settings.apiKey?'var(--teal)':'var(--gold)';
+    },100);
+  }
+  if(tab==='certificates'){ renderCertStudents(); renderEligible(); }
+  if(tab==='dashboard') updateDashboard();
+  if(tab==='students'){ renderStudents(); renderScoreFilter(); }
+  if(tab==='questions') renderQuestions();
+  if(tab==='mocksets') renderMockSets();
+  if(tab==='scores'){ renderScoreFilter(); renderScores(); }
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg,d=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),d); }
+function showModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+// ============================================================
+// URL subject pre-select
+// ============================================================
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const subj = params.get('subject');
+  if(subj){ const sel=document.getElementById('loginSubject'); if(sel){ sel.value=subj; } }
+})();
+
+// ============================================================
+// ADMIN LOGIN
+// ============================================================
+function adminLogin(){
+  if(document.getElementById('adminPwd').value===DB.settings.adminPassword){
+    showScreen('adminScreen'); updateDashboard(); document.getElementById('adminPwd').value='';
+  } else toast('❌ Incorrect password');
+}
+
+// ============================================================
+// STUDENT LOGIN
+// ============================================================
+let currentStudent=null, currentSubject='', examQs=[], currentQ=0;
+let answers=[], flags=[], timer=null, timeLeft=0, reviewMode=false;
+
+function studentLogin(){
+  const name=document.getElementById('loginName').value.trim();
+  const pin=document.getElementById('loginPin').value.trim();
+  const subject=document.getElementById('loginSubject').value;
+  if(!name||!pin||!subject){ toast('⚠️ Fill all fields'); return; }
+  const student=DB.students.find(s=>s.pin===pin&&s.name.toLowerCase()===name.toLowerCase());
+  if(!student){ toast('❌ Student not found. Check your name and PIN.'); return; }
+  const pool=DB.questions[subject]||[];
+  if(pool.length<5){
+    // auto generate if empty
+    toast('⏳ Generating AI questions for this subject...');
+    autoGenerateAndStart(name,pin,subject,student);
+    return;
+  }
+  startExam(student,subject,pool);
+}
+
+function startExam(student,subject,pool){
+  currentStudent=student; currentSubject=subject;
+  const n=Math.min(DB.settings.questionsPerExam,pool.length);
+  examQs=shuffle([...pool]).slice(0,n);
+  answers=new Array(examQs.length).fill(null);
+  flags=new Array(examQs.length).fill(false);
+  currentQ=0; reviewMode=false;
+  timeLeft=DB.settings.timeLimitMinutes*60;
+  document.getElementById('examSName').textContent=student.name;
+  document.getElementById('examSubPill').textContent=subject.toUpperCase();
+  showScreen('examScreen');
+  renderQuestion(); buildQGrid(); startTimer();
+}
+
+async function autoGenerateAndStart(name,pin,subject,student){
+  try{
+    const qs = await callAIForQuestions(subject,'',20);
+    if(qs && qs.length>0){
+      DB.questions[subject].push(...qs); saveDB();
+      startExam(student,subject,DB.questions[subject]);
+    } else toast('❌ Could not generate questions. Contact your instructor.');
+  } catch(e){ toast('❌ Error generating questions. Contact your instructor.'); }
+}
+
+// ============================================================
+// EXAM ENGINE
+// ============================================================
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+
+function renderQuestion(){
+  const q=examQs[currentQ];
+  document.getElementById('qNumLbl').textContent=reviewMode?`Question ${currentQ+1} — Review`:`Question ${currentQ+1}`;
+  document.getElementById('qText').textContent=q.question;
+  document.getElementById('qCounter').textContent=`Question ${currentQ+1} of ${examQs.length}`;
+  document.getElementById('examProg').style.width=`${((currentQ+1)/examQs.length)*100}%`;
+  document.getElementById('flagBtn').classList.toggle('flagged',flags[currentQ]);
+
+  const list=document.getElementById('optsList');
+  list.innerHTML='';
+  ['A','B','C','D'].forEach((ltr,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.innerHTML=`<span class="opt-letter">${ltr}</span><span>${q.options[i]}</span>`;
+    if(reviewMode){
+      if(ltr===q.answer && answers[currentQ]===ltr) btn.classList.add('correct');
+      else if(ltr===answers[currentQ] && answers[currentQ]!==q.answer) btn.classList.add('wrong');
+      else if(ltr===q.answer) btn.classList.add('reveal-correct');
+    } else {
+      if(answers[currentQ]===ltr) btn.classList.add('selected');
+      if(answers[currentQ]===null) btn.onclick=()=>selectAnswer(ltr);
+    }
+    list.appendChild(btn);
+  });
+
+  // Show explanation only in review mode
+  const expBox=document.getElementById('expBox');
+  if(reviewMode && q.explanation){
+    document.getElementById('expText').textContent=q.explanation;
+    expBox.classList.add('show');
+  } else expBox.classList.remove('show');
+
+  document.getElementById('prevBtn').disabled=currentQ===0;
+  const isLast=currentQ===examQs.length-1;
+  if(reviewMode){
+    document.getElementById('nextBtn').style.display='';
+    document.getElementById('nextBtn').textContent=isLast?'✅ Finish':'Next →';
+    document.getElementById('nextBtn').onclick=()=>{ if(isLast) showScreen('resultScreen'); else{ currentQ++; renderQuestion(); } };
+    document.getElementById('submitBtn').style.display='none';
+  } else {
+    document.getElementById('nextBtn').style.display=isLast?'none':'';
+    document.getElementById('nextBtn').textContent='Next →';
+    document.getElementById('nextBtn').onclick=()=>navigate(1);
+    document.getElementById('submitBtn').style.display=isLast?'':'none';
+  }
+  updateQGrid();
+}
+
+function selectAnswer(ltr){
+  answers[currentQ]=ltr;
+  // Re-render to show selection (no explanation yet)
+  const list=document.getElementById('optsList');
+  list.querySelectorAll('.opt-btn').forEach((btn,i)=>{
+    const l=['A','B','C','D'][i];
+    btn.classList.toggle('selected',l===ltr);
+    btn.querySelector('.opt-letter').style.background=l===ltr?'var(--teal)':'';
+    btn.querySelector('.opt-letter').style.color=l===ltr?'#080d14':'';
+    if(l===ltr) btn.onclick=null; else if(answers[currentQ]===null) btn.onclick=()=>selectAnswer(l);
+  });
+  updateQGrid();
+}
+
+function navigate(dir){ currentQ=Math.max(0,Math.min(examQs.length-1,currentQ+dir)); renderQuestion(); }
+function toggleFlag(){ flags[currentQ]=!flags[currentQ]; document.getElementById('flagBtn').classList.toggle('flagged',flags[currentQ]); updateQGrid(); }
+
+function buildQGrid(){
+  const grid=document.getElementById('qGrid'); grid.innerHTML='';
+  examQs.forEach((_,i)=>{
+    const b=document.createElement('button'); b.className='qnb'; b.textContent=i+1; b.id=`qb-${i}`;
+    b.onclick=()=>{ currentQ=i; renderQuestion(); };
+    grid.appendChild(b);
+  });
+}
+function updateQGrid(){
+  examQs.forEach((_,i)=>{
+    const b=document.getElementById(`qb-${i}`); if(!b) return;
+    b.className='qnb';
+    if(i===currentQ) b.classList.add('current');
+    else if(flags[i]) b.classList.add('flagged');
+    else if(answers[i]!==null) b.classList.add('answered');
+  });
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer(){
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    timeLeft--;
+    const m=Math.floor(timeLeft/60),s=timeLeft%60;
+    document.getElementById('timerVal').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const box=document.getElementById('timerBox');
+    box.className='timer-box';
+    if(timeLeft<=300) box.classList.add('warn');
+    if(timeLeft<=60) box.classList.add('danger');
+    if(timeLeft<=0){ clearInterval(timer); submitExam(); }
+  },1000);
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+function showSubmitModal(){
+  const ua=answers.filter(a=>a===null).length;
+  document.getElementById('submitModalText').textContent=ua>0?`You have ${ua} unanswered question(s). Submit anyway?`:'Submit your exam now?';
+  showModal('submitModal');
+}
+
+function submitExam(){
+  clearInterval(timer); closeModal('submitModal');
+  let correct=0,wrong=0,skipped=0;
+  examQs.forEach((q,i)=>{ if(answers[i]===null) skipped++; else if(answers[i]===q.answer) correct++; else wrong++; });
+  const pct=Math.round((correct/examQs.length)*100);
+  const result={student:currentStudent.name,subject:currentSubject,score:pct,correct,wrong,skipped,total:examQs.length,date:new Date().toLocaleDateString('en-NG')};
+  DB.results.push(result);
+  const si=DB.students.findIndex(s=>s.pin===currentStudent.pin);
+  if(si!==-1){ DB.students[si].attempts=(DB.students[si].attempts||0)+1; DB.students[si].bestScore=Math.max(DB.students[si].bestScore||0,pct); }
+  saveDB();
+
+  const ring=document.getElementById('scoreRing'); ring.style.setProperty('--pct',`${pct}%`);
+  document.getElementById('scoreNum').textContent=pct+'%';
+  document.getElementById('rC').textContent=correct;
+  document.getElementById('rW').textContent=wrong;
+  document.getElementById('rS').textContent=skipped;
+
+  let grade,emoji,msg;
+  if(pct>=90){grade='OUTSTANDING';emoji='🏆';msg='Phenomenal! You are in the top tier. Gold standard performance!'}
+  else if(pct>=80){grade='EXCELLENT';emoji='🌟';msg='Brilliant effort! You are clearly putting in the work.'}
+  else if(pct>=65){grade='VERY GOOD';emoji='👏';msg='Great score! Keep pushing and the top is within reach.'}
+  else if(pct>=50){grade='GOOD';emoji='👍';msg='You passed! But there is room to grow — keep studying.'}
+  else if(pct>=40){grade='FAIR';emoji='📚';msg='Do not be discouraged. Review your weak areas and try again.'}
+  else{grade='NEEDS IMPROVEMENT';emoji='💪';msg='Every champion started somewhere. Rise up and keep reading!'}
+
+  document.getElementById('resultEmoji').textContent=emoji;
+  document.getElementById('resultGrade').textContent=grade;
+  document.getElementById('resultMsg').textContent=msg;
+  document.getElementById('resultPush').textContent=getPush(pct);
+  showScreen('resultScreen');
+}
+
+function startReview(){ reviewMode=true; currentQ=0; showScreen('examScreen'); renderQuestion(); }
+
+const pushMessages=[
+  "Your JAMB result will not write itself. Every hour you spend reading today is a direct investment in your future. The exam hall will reveal your preparation — make it count! 🔥",
+  "Think of your dream university, your dream course, the life ahead of you. That vision should be enough reason to pick up that textbook right now. Don't wait — START! 📚",
+  "JAMB rewards preparation, not wishes. While others sleep, you study. That single difference separates ordinary from extraordinary results. Keep going! 💪",
+  "You have everything it takes. Your brain, your drive, your potential — the only ingredient left is consistent daily reading. One topic, one day at a time. You've got this! 🌟",
+  "Every outstanding student you admire once sat where you sit today. The difference? They never stopped. Your breakthrough is closer than you think — do not quit! 🚀"
+];
+function getPush(pct){
+  if(pct>=90) return "You are performing at an elite level! Maintain this consistency and JAMB will reward you magnificently. You are already setting yourself apart — never relent! 🏆";
+  if(pct>=70) return pushMessages[0];
+  return pushMessages[Math.floor(Math.random()*pushMessages.length)];
+}
+
+// ============================================================
+// CALCULATOR
+// ============================================================
+let calcExpr='';
+function toggleCalc(){ document.getElementById('calcOverlay').classList.toggle('show'); }
+function calcInput(val){
+  if(val==='C'){ calcExpr=''; document.getElementById('calcDisplay').textContent='0'; return; }
+  calcExpr+=val;
+  document.getElementById('calcDisplay').textContent=calcExpr;
+}
+function calcEquals(){
+  try{ const r=Function('"use strict";return ('+calcExpr+')')(); calcExpr=String(r); document.getElementById('calcDisplay').textContent=r; }
+  catch(e){ document.getElementById('calcDisplay').textContent='Error'; calcExpr=''; }
+}
+
+// ============================================================
+// MOCK SETS
+// ============================================================
+function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+function createMockSet(){
+  const name=document.getElementById('msName').value.trim();
+  const subject=document.getElementById('msSubject').value;
+  const qCount=parseInt(document.getElementById('msQCount').value)||40;
+  const time=parseInt(document.getElementById('msTime').value)||45;
+  if(!name){ toast('⚠️ Enter a mock name'); return; }
+  const id=genId();
+  DB.mockSets.push({id,name,subject,questionsPerExam:qCount,timeLimitMinutes:time,created:new Date().toLocaleDateString('en-NG')});
+  saveDB(); renderMockSets(); updateDashboard();
+  document.getElementById('msName').value='';
+  toast(`✅ "${name}" created! Copy the link below.`);
+}
+
+function createCombinedMock(){
+  const name=document.getElementById('cmName').value.trim();
+  const time=parseInt(document.getElementById('cmTime').value)||120;
+  const eng=parseInt(document.getElementById('cmEnglish').value)||20;
+  const others=parseInt(document.getElementById('cmOthers').value)||20;
+  if(!name){ toast('⚠️ Enter a mock name'); return; }
+  const id=genId();
+  DB.combinedMocks.push({id,name,timeLimitMinutes:time,englishQuestions:eng,othersQuestions:others,created:new Date().toLocaleDateString('en-NG')});
+  saveDB(); renderMockSets(); updateDashboard();
+  document.getElementById('cmName').value='';
+  toast(`✅ Combined mock "${name}" created! Copy the link below.`);
+}
+
+function deleteMockSet(id,combined){
+  if(!confirm('Delete this mock set?')) return;
+  if(combined) DB.combinedMocks=DB.combinedMocks.filter(m=>m.id!==id);
+  else DB.mockSets=DB.mockSets.filter(m=>m.id!==id);
+  saveDB(); renderMockSets(); updateDashboard(); toast('✅ Deleted');
+}
+
+function renderMockSets(){
+  const container=document.getElementById('mockSetList');
+  if(!container) return;
+  const base=window.location.href.split('?')[0];
+  let html='';
+
+  if(!DB.mockSets.length&&!DB.combinedMocks.length){
+    container.innerHTML='<p style="color:var(--gray);text-align:center;padding:24px;">No mock sets yet. Create one above ☝️</p>';
+    return;
+  }
+
+  if(DB.mockSets.length){
+    html+=`<div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--gray);font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05);">📚 Single Subject Mocks</div>`;
+    html+=DB.mockSets.map(m=>{
+      const url=`${base}?mock=${m.id}`;
+      const emoji=SUBJ_EMOJIS[m.subject]||'📝';
+      return `<div class="mock-set-card">
+        <div style="font-size:1.6rem;">${emoji}</div>
+        <div class="mock-set-info">
+          <div class="mock-set-name">${m.name} <span class="pill pill-teal" style="font-size:0.65rem;">${SUBJ_LABELS[m.subject]}</span></div>
+          <div class="mock-set-meta">${m.questionsPerExam} questions • ${m.timeLimitMinutes} mins • Created ${m.created}</div>
+          <div class="link-box" style="margin-top:8px;">
+            <code>${url}</code>
+            <button class="copy-btn" onclick="copyLink('${url}',this)">📋 Copy</button>
+          </div>
+        </div>
+        <button onclick="deleteMockSet('${m.id}',false)" style="background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.2);color:var(--red);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.78rem;font-weight:700;flex-shrink:0;">🗑️</button>
+      </div>`;
+    }).join('');
+  }
+
+  if(DB.combinedMocks.length){
+    html+=`<div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:2px;color:#a78bfa;font-weight:700;margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(124,58,237,0.15);">🎯 Combined JAMB Mocks</div>`;
+    html+=DB.combinedMocks.map(m=>{
+      const url=`${base}?cmock=${m.id}`;
+      return `<div class="mock-set-card combined-set">
+        <div style="font-size:1.6rem;">🎯</div>
+        <div class="mock-set-info">
+          <div class="mock-set-name">${m.name} <span class="pill pill-purple" style="font-size:0.65rem;">Combined</span></div>
+          <div class="mock-set-meta">English (${m.englishQuestions}q) + 3 subjects (${m.othersQuestions}q each) • ${m.timeLimitMinutes} mins • Created ${m.created}</div>
+          <div class="link-box combined-link" style="margin-top:8px;">
+            <code>${url}</code>
+            <button class="copy-btn" style="border-color:rgba(124,58,237,0.3);color:#a78bfa;background:rgba(124,58,237,0.08);" onclick="copyLink('${url}',this)">📋 Copy</button>
+          </div>
+        </div>
+        <button onclick="deleteMockSet('${m.id}',true)" style="background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.2);color:var(--red);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.78rem;font-weight:700;flex-shrink:0;">🗑️</button>
+      </div>`;
+    }).join('');
+  }
+
+  container.innerHTML=html;
+}
+
+function copyLink(url,btn){
+  navigator.clipboard.writeText(url).then(()=>{
+    btn.textContent='✅ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy',2000);
+  }).catch(()=>{
+    // fallback for browsers that block clipboard
+    const el=document.createElement('textarea');
+    el.value=url; document.body.appendChild(el); el.select();
+    document.execCommand('copy'); document.body.removeChild(el);
+    btn.textContent='✅ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy',2000);
+  });
+}
+
+// ============================================================
+// QUESTIONS
+// ============================================================
+function addSingleQ(){
+  const subj=document.getElementById('qSubject').value;
+  const q=document.getElementById('qText').value.trim();
+  const a=document.getElementById('qA').value.trim();
+  const b=document.getElementById('qB').value.trim();
+  const c=document.getElementById('qC').value.trim();
+  const d=document.getElementById('qD').value.trim();
+  const ans=document.getElementById('qAnswer').value;
+  const exp=document.getElementById('qExp').value.trim();
+  if(!q||!a||!b||!c||!d){ toast('⚠️ Fill all fields'); return; }
+  DB.questions[subj].push({question:q,options:[a,b,c,d],answer:ans,explanation:exp});
+  saveDB(); renderQuestions(); updateDashboard();
+  ['qText','qA','qB','qC','qD','qExp'].forEach(id=>document.getElementById(id).value='');
+  toast('✅ Question added!');
+}
+
+function renderQuestions(){
+  const filter=document.getElementById('qFilterSubject').value;
+  const all=Object.entries(DB.questions).flatMap(([subj,qs])=>qs.map(q=>({...q,subject:subj}))).filter(q=>!filter||q.subject===filter);
+  const total=Object.values(DB.questions).reduce((s,a)=>s+a.length,0);
+  document.getElementById('totalQBadge').textContent=total+' Questions';
+  const list=document.getElementById('questionList');
+  if(!all.length){ list.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px;">No questions yet</p>'; return; }
+  list.innerHTML=all.slice(-30).reverse().map(q=>`
+    <div class="q-preview">
+      <div style="display:flex;gap:8px;margin-bottom:6px;"><span class="pill pill-teal">${q.subject}</span></div>
+      <div class="qt">${q.question}</div>
+      <div class="qo">${['A','B','C','D'].map((l,i)=>`<span class="${q.answer===l?'correct':''}">${l}: ${q.options[i]}${q.answer===l?' ✓':''}</span>`).join('')}</div>
+      ${q.explanation?`<div class="qexp">💡 ${q.explanation}</div>`:''}
+    </div>`).join('');
+}
+
+function handleDocUpload(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>parseQText(ev.target.result);
+  reader.readAsText(file);
+}
+
+function parseQText(text){
+  const blocks=text.split(/\n---\n|\n---\r\n/); let added=0;
+  blocks.forEach(block=>{
+    const qm=block.match(/Q:\s*(.+)/i);
+    const am=block.match(/^A:\s*(.+)/mi),bm=block.match(/^B:\s*(.+)/mi);
+    const cm=block.match(/^C:\s*(.+)/mi),dm=block.match(/^D:\s*(.+)/mi);
+    const anm=block.match(/ANSWER:\s*([ABCD])/i);
+    const exm=block.match(/EXPLANATION:\s*(.+)/i);
+    const subm=block.match(/SUBJECT:\s*(\w+)/i);
+    if(qm&&am&&bm&&cm&&dm&&anm){
+      const subj=subm?subm[1].toLowerCase():'mathematics';
+      const key=SUBJECTS.find(k=>k===subj)||'mathematics';
+      DB.questions[key].push({question:qm[1].trim(),options:[am[1].trim(),bm[1].trim(),cm[1].trim(),dm[1].trim()],answer:anm[1].toUpperCase(),explanation:exm?exm[1].trim():''});
+      added++;
+    }
+  });
+  if(added>0){ saveDB(); renderQuestions(); updateDashboard(); toast(`✅ ${added} questions imported!`); }
+  else toast('⚠️ No questions parsed. Check format guide.');
+}
+
+// ============================================================
+// AI GENERATOR
+// ============================================================
+async function callAIForQuestions(subject, topic, count){
+  // Check if running from local file - AI API won't work from local files
+  const isLocal = window.location.protocol === 'file:' || window.location.protocol === 'content:';
+  if(isLocal){
+    throw new Error('LOCAL_FILE');
+  }
+
+  const prompt = `Generate exactly ${count} JAMB (Joint Admissions and Matriculation Board, Nigeria) standard multiple-choice questions for ${subject}${topic?' on the topic of '+topic:''}.
+
+Return ONLY a valid JSON array, no other text, no markdown, no backticks. Format:
+[{"question":"...","options":["option A text","option B text","option C text","option D text"],"answer":"A","explanation":"..."}]
+
+Requirements:
+- Questions must be authentic JAMB exam style
+- All 4 options must be plausible
+- Answers must be correct
+- Explanations must be clear and educational
+- Cover different difficulty levels`;
+
+  const apiKey = DB.settings.apiKey||'';
+  if(!apiKey){
+    throw new Error('NO_API_KEY');
+  }
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:4000,
+      messages:[{role:"user",content:prompt}]
+    })
+  });
+  if(!response.ok){
+    const err = await response.json().catch(()=>({}));
+    throw new Error('API_ERROR:' + (err?.error?.message||response.status));
+  }
+  const data = await response.json();
+  const text = data.content.map(i=>i.text||'').join('');
+  const clean = text.replace(/```json|```/g,'').trim();
+  return JSON.parse(clean);
+}
+
+async function generateAIQuestions(){
+  const subject=document.getElementById('aiSubject').value;
+  const topic=document.getElementById('aiTopic').value.trim();
+  const count=parseInt(document.getElementById('aiCount').value);
+  const spinner=document.getElementById('aiSpinner');
+  const preview=document.getElementById('aiPreview');
+  spinner.classList.add('show'); preview.innerHTML='';
+
+  try{
+    const qs=await callAIForQuestions(subject,topic,count);
+    spinner.classList.remove('show');
+    if(!qs||!qs.length){ toast('⚠️ No questions returned'); return; }
+
+    preview.innerHTML=`<div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="color:var(--teal);font-weight:700;">✅ ${qs.length} questions generated</span>
+      <button class="btn btn-teal" style="width:auto;padding:9px 20px;" onclick="saveAIQuestions()">💾 Save All to Bank</button>
+    </div>`
+    +qs.slice(0,5).map(q=>`<div class="q-preview">
+      <div class="qt">${q.question}</div>
+      <div class="qo">${['A','B','C','D'].map((l,i)=>`<span class="${q.answer===l?'correct':''}">${l}: ${q.options[i]}${q.answer===l?' ✓':''}</span>`).join('')}</div>
+      ${q.explanation?`<div class="qexp">💡 ${q.explanation}</div>`:''}
+    </div>`).join('')
+    +(qs.length>5?`<p style="color:var(--gray);font-size:0.82rem;text-align:center;padding:8px;">...and ${qs.length-5} more questions</p>`:'');
+
+    window._pendingAIQuestions={subject,qs};
+  } catch(err){
+    spinner.classList.remove('show');
+    spinner.classList.remove('show');
+    if(err.message==='LOCAL_FILE'){
+      preview.innerHTML=`<div style="background:rgba(232,185,79,0.07);border:1px solid rgba(232,185,79,0.25);border-radius:12px;padding:20px;">
+        <div style="font-size:1.3rem;margin-bottom:10px;">⚠️</div>
+        <div style="font-weight:700;color:var(--gold);margin-bottom:8px;">AI Generator needs online hosting</div>
+        <div style="font-size:0.88rem;color:var(--gray);line-height:1.7;">The file must be hosted online (e.g. Netlify Drop) for AI to work. Opening from phone storage won't work.</div>
+      </div>`;
+    } else if(err.message==='NO_API_KEY'){
+      preview.innerHTML=`<div style="background:rgba(232,185,79,0.07);border:1px solid rgba(232,185,79,0.25);border-radius:12px;padding:20px;">
+        <div style="font-size:1.5rem;margin-bottom:10px;">🔑</div>
+        <div style="font-weight:700;color:var(--gold);margin-bottom:10px;">API Key Required</div>
+        <div style="font-size:0.88rem;color:var(--gray);line-height:1.8;">
+          To use the AI Generator, you need a free Anthropic API key.<br><br>
+          <strong style="color:var(--white);">Steps to get your key:</strong><br>
+          1. Go to <strong style="color:var(--teal);">console.anthropic.com</strong><br>
+          2. Sign up for a free account<br>
+          3. Click <em>API Keys</em> → Create a key<br>
+          4. Copy the key (starts with <code style="color:var(--teal);">sk-ant-...</code>)<br>
+          5. Go to <strong style="color:var(--teal);">Settings tab</strong> in this admin panel and paste it<br>
+          6. Come back here and generate! ✅
+        </div>
+      </div>`;
+    } else {
+      preview.innerHTML=`<div style="background:rgba(255,82,82,0.07);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:16px;">
+        <div style="color:var(--red);font-weight:700;margin-bottom:6px;">❌ Generation failed</div>
+        <div style="font-size:0.85rem;color:var(--gray);">Error: ${err.message}<br>Check your API key in Settings and try again.</div>
+      </div>`;
+    }
+    console.error(err);
+  }
+}
+
+function saveAIQuestions(){
+  if(!window._pendingAIQuestions) return;
+  const {subject,qs}=window._pendingAIQuestions;
+  DB.questions[subject].push(...qs);
+  saveDB(); renderQuestions(); updateDashboard();
+  document.getElementById('aiPreview').innerHTML='<p style="color:var(--teal);font-weight:700;padding:12px;">✅ All questions saved to the bank!</p>';
+  window._pendingAIQuestions=null;
+  toast(`✅ ${qs.length} questions saved to ${subject}!`);
+}
+
+// ============================================================
+// STUDENTS
+// ============================================================
+function addStudent(){
+  const name=document.getElementById('sName').value.trim();
+  const pin=document.getElementById('sPin').value.trim();
+  if(!name||pin.length<4){ toast('⚠️ Enter name and min 4-digit PIN'); return; }
+  if(DB.students.find(s=>s.pin===pin)){ toast('⚠️ PIN already exists'); return; }
+  DB.students.push({name,pin,attempts:0,bestScore:0});
+  saveDB(); renderStudents(); updateDashboard(); renderCertStudents(); renderScoreFilter();
+  document.getElementById('sName').value=''; document.getElementById('sPin').value='';
+  toast(`✅ ${name} added!`);
+}
+
+function handleCSV(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    const lines=ev.target.result.split('\n').filter(l=>l.trim());
+    let added=0,skipped=0;
+    // skip header row
+    lines.slice(1).forEach(line=>{
+      const parts=line.split(',').map(p=>p.replace(/"/g,'').trim());
+      if(parts.length>=2){
+        const name=parts[0], pin=parts[1];
+        if(name&&pin&&!DB.students.find(s=>s.pin===pin)){
+          DB.students.push({name,pin,attempts:0,bestScore:0}); added++;
+        } else skipped++;
+      }
+    });
+    saveDB(); renderStudents(); updateDashboard(); renderCertStudents(); renderScoreFilter();
+    toast(`✅ ${added} students added, ${skipped} skipped (duplicates/invalid)`);
+  };
+  reader.readAsText(file);
+}
+
+function renderStudents(){
+  const tbody=document.getElementById('studentList');
+  document.getElementById('sCount').textContent=DB.students.length;
+  if(!DB.students.length){ tbody.innerHTML='<tr><td colspan="6" style="color:var(--gray);text-align:center;padding:20px;">No students yet</td></tr>'; return; }
+  tbody.innerHTML=DB.students.map((s,i)=>`<tr>
+    <td>${i+1}</td><td>${s.name}</td>
+    <td><code style="font-family:monospace;background:rgba(255,255,255,0.06);padding:3px 8px;border-radius:5px;">${s.pin}</code></td>
+    <td>${s.attempts||0}</td>
+    <td style="color:${(s.bestScore||0)>=50?'var(--teal)':'var(--red)'};">${s.bestScore||0}%</td>
+    <td><button onclick="removeStudent(${i})" style="background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.25);color:var(--red);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:0.78rem;">Remove</button></td>
+  </tr>`).join('');
+}
+
+function removeStudent(i){ DB.students.splice(i,1); saveDB(); renderStudents(); updateDashboard(); renderCertStudents(); toast('Student removed'); }
+
+// ============================================================
+// SCORE TRACKER
+// ============================================================
+function renderScoreFilter(){
+  const sel=document.getElementById('scoreFilterStud');
+  sel.innerHTML='<option value="">All Students</option>'+DB.students.map(s=>`<option value="${s.name}">${s.name}</option>`).join('');
+}
+
+function renderScores(){
+  const subjF=document.getElementById('scoreFilterSubj').value;
+  const studF=document.getElementById('scoreFilterStud').value;
+  let results=[...DB.results];
+  if(subjF) results=results.filter(r=>r.subject===subjF);
+  if(studF) results=results.filter(r=>r.student===studF);
+  const container=document.getElementById('scoreList');
+  if(!results.length){ container.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px;">No results match this filter</p>'; return; }
+  container.innerHTML=results.slice().reverse().map(r=>{
+    const barColor=r.score>=70?'var(--teal)':r.score>=50?'var(--gold)':'var(--red)';
+    return `<div class="student-score-row">
+      <div style="width:120px;font-weight:700;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.student}</div>
+      <span class="pill pill-teal" style="font-size:0.68rem;white-space:nowrap;">${r.subject}</span>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:${r.score}%;background:${barColor};"></div></div>
+      <div style="font-family:'Cinzel',serif;font-size:1.1rem;color:${barColor};width:48px;text-align:right;">${r.score}%</div>
+      <div style="font-size:0.72rem;color:var(--gray);width:80px;text-align:right;">${r.date}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// LEADERBOARD
+// ============================================================
+function renderLeaderboard(){
+  const container=document.getElementById('leaderboardList');
+  if(!DB.results.length){ container.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px;">No results yet</p>'; return; }
+  const best={};
+  DB.results.forEach(r=>{ if(!best[r.student]||r.score>best[r.student].score) best[r.student]=r; });
+  const sorted=Object.values(best).sort((a,b)=>b.score-a.score);
+  const rk=['gold','silver','bronze'];
+  const re=['🥇','🥈','🥉'];
+  container.innerHTML=sorted.slice(0,20).map((r,i)=>{
+    const ini=r.student.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="lb-row">
+      <div class="lb-rank ${i<3?rk[i]:''}">${i<3?re[i]:`#${i+1}`}</div>
+      <div class="lb-avatar">${ini}</div>
+      <div class="lb-info"><div class="lb-name">${r.student}</div><div class="lb-detail">${r.subject} • ${r.date}</div></div>
+      <div class="lb-score">${r.score}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// SUBJECT LINKS
+// ============================================================
+function renderLinks(){
+  const base=window.location.href.split('?')[0];
+  const container=document.getElementById('subjectLinks');
+  const subjects=[
+    {key:'mathematics',label:'Mathematics',emoji:'📐'},
+    {key:'english',label:'English Language',emoji:'📖'},
+    {key:'physics',label:'Physics',emoji:'⚡'},
+    {key:'chemistry',label:'Chemistry',emoji:'🧪'},
+    {key:'biology',label:'Biology',emoji:'🌿'},
+    {key:'government',label:'Government',emoji:'🏛️'},
+    {key:'economics',label:'Economics',emoji:'📊'},
+    {key:'literature',label:'Literature',emoji:'📜'},
+    {key:'commerce',label:'Commerce',emoji:'💼'},
+    {key:'accounting',label:'Financial Accounting',emoji:'🔢'}
+  ];
+  container.innerHTML=subjects.map(s=>{
+    const url=`${base}?subject=${s.key}`;
+    return `<div class="link-box">
+      <span style="font-size:1.2rem;">${s.emoji}</span>
+      <div style="flex:1;">
+        <div style="font-size:0.8rem;font-weight:700;color:var(--white);margin-bottom:3px;">${s.label}</div>
+        <code>${url}</code>
+      </div>
+      <button class="copy-btn" onclick="copyLink('${url}',this)">📋 Copy</button>
+    </div>`;
+  }).join('');
+}
+
+function copyLink(url,btn){
+  navigator.clipboard.writeText(url).then(()=>{ btn.textContent='✅ Copied!'; setTimeout(()=>btn.textContent='📋 Copy',2000); });
+}
+
+// ============================================================
+// CERTIFICATES
+// ============================================================
+function renderCertStudents(){
+  const sel=document.getElementById('certStudent');
+  sel.innerHTML='<option value="">-- Select --</option>'+DB.students.map(s=>`<option value="${s.name}">${s.name}</option>`).join('');
+  document.getElementById('certDate').value=new Date().toISOString().split('T')[0];
+}
+
+function renderEligible(){
+  const container=document.getElementById('eligibleList');
+  if(!DB.results.length){ container.innerHTML='<p style="color:var(--gray);font-size:0.88rem;">No results yet</p>'; return; }
+  const best={};
+  DB.results.forEach(r=>{ if(!best[r.student]||r.score>best[r.student].score) best[r.student]=r; });
+  const eligible=Object.values(best).filter(r=>r.score>=81).sort((a,b)=>b.score-a.score);
+  if(!eligible.length){ container.innerHTML='<p style="color:var(--gray);font-size:0.88rem;">No students have scored 81% or above yet</p>'; return; }
+  container.innerHTML=eligible.map(r=>{
+    const tier=r.score>=90?'🥇 Gold':r.score>=85?'🥈 Silver':'🥉 Bronze';
+    const tc=r.score>=90?'var(--gold)':r.score>=85?'var(--silver)':'var(--bronze)';
+    return `<div class="lb-row" style="cursor:pointer;" onclick="prefillCert('${r.student}','${r.subject}',${r.score})">
+      <div style="font-size:1.3rem;">${tier.split(' ')[0]}</div>
+      <div style="flex:1;"><div style="font-weight:700;font-size:0.9rem;">${r.student}</div><div style="font-size:0.75rem;color:var(--gray);">${r.subject}</div></div>
+      <div style="font-family:'Cinzel',serif;font-size:1.3rem;color:${tc};">${r.score}%</div>
+      <span style="font-size:0.75rem;color:${tc};font-weight:700;">${tier}</span>
+    </div>`;
+  }).join('');
+}
+
+function prefillCert(name,subject,score){
+  document.getElementById('certStudent').value=name;
+  document.getElementById('certSubject').value=subject.charAt(0).toUpperCase()+subject.slice(1);
+  document.getElementById('certScore').value=score;
+  toast('Fields pre-filled. Click Generate!');
+}
+
+function generateCert(tier){
+  const name=document.getElementById('certStudent').value;
+  const subject=document.getElementById('certSubject').value;
+  const score=parseInt(document.getElementById('certScore').value);
+  const dateVal=document.getElementById('certDate').value;
+  if(!name||isNaN(score)){ toast('⚠️ Fill all fields'); return; }
+
+  const canvas=document.createElement('canvas');
+  canvas.width=1000; canvas.height=700;
+  const ctx=canvas.getContext('2d');
+
+  if(tier==='gold'){
+    // Gold cert — deep navy with gold ornaments
+    const bg=ctx.createLinearGradient(0,0,1000,700);
+    bg.addColorStop(0,'#0a0e1a'); bg.addColorStop(1,'#1a1000');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,1000,700);
+    // Outer border
+    ctx.strokeStyle='#e8b94f'; ctx.lineWidth=10;
+    ctx.strokeRect(18,18,964,664);
+    ctx.strokeStyle='rgba(232,185,79,0.4)'; ctx.lineWidth=2;
+    ctx.strokeRect(30,30,940,640);
+    ctx.strokeStyle='rgba(232,185,79,0.2)'; ctx.lineWidth=1;
+    ctx.strokeRect(40,40,920,620);
+    // Corner ornaments
+    [[55,55],[945,55],[55,645],[945,645]].forEach(([x,y])=>{
+      ctx.fillStyle='#e8b94f'; ctx.font='28px serif'; ctx.textAlign='center'; ctx.fillText('✦',x,y+8);
+    });
+    // Header
+    ctx.fillStyle='#e8b94f'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center'; ctx.letterSpacing='4px';
+    ctx.fillText('B E A C O N   N E X U S   E X C E L L E N C E   P O R T A L', 500, 90);
+    ctx.strokeStyle='rgba(232,185,79,0.3)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(150,100); ctx.lineTo(850,100); ctx.stroke();
+    // Title
+    ctx.fillStyle='#ffd97d'; ctx.font='bold 52px serif'; ctx.textAlign='center';
+    ctx.fillText('CERTIFICATE OF EXCELLENCE', 500, 165);
+    ctx.font='italic 18px serif'; ctx.fillStyle='rgba(255,217,125,0.7)';
+    ctx.fillText('Gold Award — Exceptional Performance', 500, 196);
+    ctx.strokeStyle='rgba(232,185,79,0.3)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(200,210); ctx.lineTo(800,210); ctx.stroke();
+    // Body
+    ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.font='17px sans-serif';
+    ctx.fillText('This is to proudly certify that', 500, 255);
+    ctx.fillStyle='#ffffff'; ctx.font='bold 52px serif';
+    ctx.fillText(name, 500, 325);
+    const tw=ctx.measureText(name).width;
+    ctx.strokeStyle='#e8b94f'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(500-tw/2,335); ctx.lineTo(500+tw/2,335); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.font='17px sans-serif';
+    ctx.fillText('has demonstrated OUTSTANDING mastery in', 500, 375);
+    ctx.fillStyle='#ffd97d'; ctx.font='bold 30px sans-serif';
+    ctx.fillText(subject.toUpperCase(), 500, 415);
+    // Score ring
+    const cx=500,cy=510,r=60;
+    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=12;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke();
+    ctx.strokeStyle='#e8b94f'; ctx.lineWidth=12;
+    ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+(2*Math.PI*score/100)); ctx.stroke();
+    ctx.fillStyle='#ffd97d'; ctx.font='bold 30px serif'; ctx.textAlign='center';
+    ctx.fillText(score+'%',cx,cy+10);
+    ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px sans-serif';
+    ctx.fillText('SCORE',cx,cy+26);
+    // Seal & footer
+    ctx.font='52px serif'; ctx.fillText('🥇',500,590);
+    ctx.fillStyle='rgba(232,185,79,0.5)'; ctx.font='12px sans-serif';
+    ctx.fillText(`Issued by BEACON NEXUS  •  ${dateVal}  •  JAMB Mock Examination`, 500, 658);
+
+  } else if(tier==='silver'){
+    const bg=ctx.createLinearGradient(0,0,1000,700);
+    bg.addColorStop(0,'#0d1520'); bg.addColorStop(1,'#0d1520');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,1000,700);
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=8;
+    ctx.strokeRect(20,20,960,660);
+    ctx.strokeStyle='rgba(176,190,197,0.3)'; ctx.lineWidth=2;
+    ctx.strokeRect(32,32,936,636);
+    ctx.fillStyle='#b0bec5'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('B E A C O N   N E X U S   E X C E L L E N C E   P O R T A L', 500, 90);
+    ctx.strokeStyle='rgba(176,190,197,0.25)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(150,102); ctx.lineTo(850,102); ctx.stroke();
+    ctx.fillStyle='#d0dde3'; ctx.font='bold 50px serif';
+    ctx.fillText('CERTIFICATE OF MERIT', 500, 165);
+    ctx.font='italic 17px serif'; ctx.fillStyle='rgba(176,190,197,0.7)';
+    ctx.fillText('Silver Award — Excellent Performance', 500, 195);
+    ctx.strokeStyle='rgba(176,190,197,0.2)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(200,210); ctx.lineTo(800,210); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='16px sans-serif';
+    ctx.fillText('This is to certify that', 500, 254);
+    ctx.fillStyle='#ffffff'; ctx.font='bold 50px serif';
+    ctx.fillText(name, 500, 320);
+    const tw2=ctx.measureText(name).width;
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(500-tw2/2,330); ctx.lineTo(500+tw2/2,330); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='16px sans-serif';
+    ctx.fillText('has demonstrated EXCELLENT proficiency in', 500, 372);
+    ctx.fillStyle='#d0dde3'; ctx.font='bold 28px sans-serif';
+    ctx.fillText(subject.toUpperCase(), 500, 410);
+    const cx=500,cy=505,r=58;
+    ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=11;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke();
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=11;
+    ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+(2*Math.PI*score/100)); ctx.stroke();
+    ctx.fillStyle='#d0dde3'; ctx.font='bold 28px serif';
+    ctx.fillText(score+'%',cx,cy+9);
+    ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='11px sans-serif';
+    ctx.fillText('SCORE',cx,cy+24);
+    ctx.font='48px serif'; ctx.fillText('🥈',500,590);
+    ctx.fillStyle='rgba(176,190,197,0.45)'; ctx.font='11px sans-serif';
+    ctx.fillText(`Issued by BEACON NEXUS  •  ${dateVal}  •  JAMB Mock Examination`, 500, 655);
+
+  } else {
+    // Bronze
+    const bg=ctx.createLinearGradient(0,0,1000,700);
+    bg.addColorStop(0,'#120e08'); bg.addColorStop(1,'#0d1520');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,1000,700);
+    ctx.strokeStyle='#cd8c4a'; ctx.lineWidth=8;
+    ctx.strokeRect(20,20,960,660);
+    ctx.strokeStyle='rgba(205,140,74,0.3)'; ctx.lineWidth=2;
+    ctx.strokeRect(32,32,936,636);
+    ctx.fillStyle='#cd8c4a'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('B E A C O N   N E X U S   E X C E L L E N C E   P O R T A L', 500, 90);
+    ctx.strokeStyle='rgba(205,140,74,0.25)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(150,102); ctx.lineTo(850,102); ctx.stroke();
+    ctx.fillStyle='#e0b07a'; ctx.font='bold 48px serif';
+    ctx.fillText('CERTIFICATE OF RECOGNITION', 500, 162);
+    ctx.font='italic 16px serif'; ctx.fillStyle='rgba(205,140,74,0.7)';
+    ctx.fillText('Bronze Award — Commendable Performance', 500, 192);
+    ctx.strokeStyle='rgba(205,140,74,0.2)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(200,207); ctx.lineTo(800,207); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='16px sans-serif';
+    ctx.fillText('This is to certify that', 500, 252);
+    ctx.fillStyle='#ffffff'; ctx.font='bold 48px serif';
+    ctx.fillText(name, 500, 318);
+    const tw3=ctx.measureText(name).width;
+    ctx.strokeStyle='#cd8c4a'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(500-tw3/2,328); ctx.lineTo(500+tw3/2,328); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='16px sans-serif';
+    ctx.fillText('has demonstrated COMMENDABLE performance in', 500, 370);
+    ctx.fillStyle='#e0b07a'; ctx.font='bold 27px sans-serif';
+    ctx.fillText(subject.toUpperCase(), 500, 408);
+    const cx=500,cy=502,r=56;
+    ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=10;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke();
+    ctx.strokeStyle='#cd8c4a'; ctx.lineWidth=10;
+    ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+(2*Math.PI*score/100)); ctx.stroke();
+    ctx.fillStyle='#e0b07a'; ctx.font='bold 27px serif';
+    ctx.fillText(score+'%',cx,cy+9);
+    ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='11px sans-serif';
+    ctx.fillText('SCORE',cx,cy+24);
+    ctx.font='46px serif'; ctx.fillText('🥉',500,587);
+    ctx.fillStyle='rgba(205,140,74,0.45)'; ctx.font='11px sans-serif';
+    ctx.fillText(`Issued by BEACON NEXUS  •  ${dateVal}  •  JAMB Mock Examination`, 500, 653);
+  }
+
+  const preview=document.getElementById('certPreview');
+  canvas.style.maxWidth='100%'; canvas.style.borderRadius='12px';
+  const dlBtn=document.createElement('button');
+  dlBtn.className='btn btn-gold'; dlBtn.style.marginTop='12px'; dlBtn.style.width='auto'; dlBtn.style.padding='10px 24px';
+  dlBtn.textContent='⬇️ Download Certificate';
+  dlBtn.onclick=()=>{ const a=document.createElement('a'); a.download=`BEACON_NEXUS_${tier.toUpperCase()}_${name.replace(/\s/g,'_')}.png`; a.href=canvas.toDataURL(); a.click(); };
+  preview.innerHTML=''; preview.appendChild(canvas); preview.appendChild(dlBtn);
+  toast(`✅ ${tier.charAt(0).toUpperCase()+tier.slice(1)} certificate generated!`);
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function saveApiKey(){
+  const key=document.getElementById('setApiKey').value.trim();
+  if(!key){ toast('⚠️ Paste your API key first'); return; }
+  if(!key.startsWith('sk-ant')){ toast('⚠️ Key should start with sk-ant-...'); return; }
+  DB.settings.apiKey=key;
+  saveDB();
+  document.getElementById('setApiKey').value='';
+  document.getElementById('apiKeyStatus').textContent='✅ Key saved!';
+  document.getElementById('apiKeyStatus').style.color='var(--teal)';
+  setTimeout(()=>{ document.getElementById('apiKeyStatus').textContent='🔑 Key is saved — ready to generate'; },1500);
+  toast('✅ API key saved! AI Generator is now active.');
+}
+
+function saveSettings(){
+  DB.settings.questionsPerExam=parseInt(document.getElementById('setQ').value)||40;
+  DB.settings.timeLimitMinutes=parseInt(document.getElementById('setT').value)||45;
+  DB.settings.maxStudents=parseInt(document.getElementById('setMax').value)||300;
+  const np=document.getElementById('setPass').value.trim();
+  if(np) DB.settings.adminPassword=np;
+  saveDB(); toast('✅ Settings saved!');
+}
+
+function clearAll(){
+  if(confirm('Clear ALL exam results? This cannot be undone.')){
+    DB.results=[]; DB.students.forEach(s=>{s.attempts=0;s.bestScore=0;}); saveDB(); updateDashboard(); toast('Results cleared');
+  }
+}
+
+// ============================================================
+// SIDEBAR TOGGLE (Mobile)
+// ============================================================
+function openSidebar(){
+  const sb=document.getElementById('adminSidebar');
+  const ov=document.getElementById('sidebarOverlay');
+  const closeBtn=document.getElementById('sidebarCloseBtn');
+  if(sb){ sb.classList.add('open'); }
+  if(ov){ ov.classList.add('show'); }
+  if(closeBtn){ closeBtn.style.display='block'; }
+}
+
+function closeSidebar(){
+  const sb=document.getElementById('adminSidebar');
+  const ov=document.getElementById('sidebarOverlay');
+  const closeBtn=document.getElementById('sidebarCloseBtn');
+  if(sb){ sb.classList.remove('open'); }
+  if(ov){ ov.classList.remove('show'); }
+  if(closeBtn){ closeBtn.style.display='none'; }
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function updateDashboard(){
+  document.getElementById('statStudents').textContent=DB.students.length;
+  const totalQ=Object.values(DB.questions).reduce((s,a)=>s+a.length,0);
+  document.getElementById('statQuestions').textContent=totalQ;
+  document.getElementById('statAttempts').textContent=DB.results.length;
+  const avg=DB.results.length?Math.round(DB.results.reduce((s,r)=>s+r.score,0)/DB.results.length)+'%':'—';
+  document.getElementById('statAvg').textContent=avg;
+  const tbody=document.getElementById('recentActivity');
+  if(!DB.results.length){ tbody.innerHTML='<tr><td colspan="4" style="color:var(--gray);text-align:center;padding:20px;">No activity yet</td></tr>'; return; }
+  tbody.innerHTML=DB.results.slice(-10).reverse().map(r=>`<tr>
+    <td>${r.student}</td>
+    <td><span class="pill pill-teal">${r.subject}</span></td>
+    <td style="color:${r.score>=50?'var(--teal)':'var(--red)'};">${r.score}%</td>
+    <td>${r.date}</td>
+  </tr>`).join('');
+}
+updateDashboard();
+
+// Show local file notice if opened from phone storage
+(function(){
+  const isLocal=window.location.protocol==='file:'||window.location.protocol==='content:';
+  const notice=document.getElementById('localFileNotice');
+  if(isLocal&&notice) notice.style.display='inline';
+})();
+</script>
+</body>
+</html>
